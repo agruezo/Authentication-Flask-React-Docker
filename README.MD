@@ -1,33 +1,35 @@
-![Flask-TDD-Docker](https://user-images.githubusercontent.com/90926044/201151215-12405fa9-83c8-4720-b84d-7c3fcc6d447f.png)
-
-[![CI/CD](https://github.com/agruezo/Flask-TDD-Docker/actions/workflows/main.yml/badge.svg)](https://github.com/agruezo/Flask-TDD-Docker/actions/workflows/main.yml)
-
-<h1 align="center" >Test-Driven Development with Python, Flask, and Docker</h1>
+<h1 align="center" >Authentication with Flask, React, and Docker</h1>
 
 <h2>Objectives</h2>
 
 <h3>Part 1</h3>
 
--- Develop a RESTful API with Python, the Flask web framework, Flask-RESTX, and Postgres. Containerize Flask and Postgres to run inside Docker containers and configure pytest in order to practice Test-Driven Development (TDD)
+-- Spin up a reproducible development environment with Docker to manage a RESTful API powered by Python, the Flask, Flask-RESTX, and Postgres. Then add React along with Jest and React Testing Library to the client-side. Finally, introduce type checking, on the client-side, with React PropTypes and continuous integration (CI).
 
 
-- Develop a RESTful API with Python, Flask, and Flask-RESTX
-- Practice Test-Driven Development
-- Test a Flask app with pytest
-- Containerize Flask and Postgres inside a Docker container
-- Run unit and integration tests with code coverage
-- Check code for any code quality issues via a linter
+- Use Test-Driven Development to develop a React application
+- Work with React running inside a Docker Container
+- Test a React application with Jest and React Testing Library
+- Enable type checking with React PropTypes
 
 <h3>Part 2</h3>
 
--- Deploy Flask, Gunicorn, and Postgres to Heroku with Docker. Continue building out the RESTful API while writing unit and integration tests. Document the API with Swagger.
+-- Add password hashing in order to implement token-based authentication to the Flask app with JSON Web Tokens (JWTs). Then on the client-side, add React Router to the React app to enable client-side routing along with Formik and Yup for managing and validating forms.
 
-- Configure Github Actions for continuous integration and deployment
-- Speed up a Docker-based CI build with Docker Cache
-- Deploy Flask, Gunicorn, and Postgres to Heroku with Docker
-- Parameterize test functions and mock functionality in tests with pytest
-- Run tests in parallel with pytest-xdist
-- Configure Flask-Admin with SQLAlchemy models
+- Manage form state with Formik and Yup
+- Implement user authentication with JSON Web Tokens (JWTs)
+- Configure silent login via JWT refresh tokens
+- Develop RESTful auth endpoints with Python, Flask, and Flask-RESTX
+- Use React Router to manage client-side routes in React
+
+<h3>Part 3</h3>
+
+-- On the client-side, add an authentication flow via JSON Web Tokens (JWTs) and spend time refactoring and writing tests with React Testing Library. And finally, deploy the application to Heroku using the GitHub Actions CI/CD pipeline.
+
+- Test a Flask app with pytest
+- Configure Flask Bcrypt for password hashing
+- Containerize Flask and React with a single Dockerfile using a multi-stage build
+- Configure GitLab CI to deploy Docker images to Heroku
 - Document a RESTful API with Swagger/OpenAPI
 
 ---
