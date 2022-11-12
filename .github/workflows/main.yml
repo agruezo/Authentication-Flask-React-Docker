@@ -1,0 +1,121 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - 'main'
+
+  workflow_dispatch:
+
+jobs:
+
+  build:users:
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Build and push Docker images
+      uses: docker/build-push-action@v3.2.0
+      with:
+        context: .
+        file: .services/users/Dockerfile.prod
+        build-args: SECRET_KEY=${{ secrets.SECRET_KEY }}
+        push: true
+        tags: ${{ secrets.DOCKER_HUB_USERNAME }}/users
+        cache-from: type=registry, ref=${{ secrets.DOCKER_HUB_USERNAME }}/users:cache
+        cache-to: type=registry, ref=${{ secrets.DOCKER_HUB }}/users:buildcache, mode=max
+
+  build:client:
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Build and push Docker images
+      uses: docker/build-push-action@v3.2.0
+      with:
+        context: .
+        file: .services/client/Dockerfile.ci
+        build-args: SECRET_KEY=${{ secrets.SECRET_KEY }}
+        push: true
+        tags: ${{ secrets.DOCKER_HUB_USERNAME }}/client
+        cache-from: type=registry, ref=${{ secrets.DOCKER_HUB_USERNAME }}/client:cache
+        cache-to: type=registry, ref=${{ secrets.DOCKER_HUB }}/client:buildcache, mode=max
+
+  test:users:
+    runs-on: ubuntu-latest
+    needs: build:users
+    container:
+      image: agruezo/users
+    defaults:
+      run:
+        working-directory: /usr/src/app
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_DB: users
+          POSTGRES_USR: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_PORT: 5432
+          DATABASE_TEST_URL: postgresql://postgres:postgres@postgres:5432/users
+          FLASK_ENV: development
+        ports:
+          - 5432:5432
+        options:
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+
+      - name: Run Tests
+        env:
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          DATABASE_URL: postgresql://postgres:postgres@postgres:5432/users
+        run: |
+          pytest "src/tests" -p no:warnings -p no:cacheprovider
+          flake8 src
+          black src --check
+          isort src --check-only
+
+  test:users:
+    runs-on: ubuntu-latest
+    needs: build:client
+    container:
+      image: agruezo/client
+    defaults:
+      run:
+        working-directory: /usr/src/app
+
+    steps:
+
+      - name: Run Tests
+        run: |
+          npm run prettier:check
+          npm run lint
+          npm run test
