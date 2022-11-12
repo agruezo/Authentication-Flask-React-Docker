@@ -9,8 +9,8 @@ ENV PATH /usr/src/app/node_modules/.bin:$PATH
 ENV NODE_ENV development
 
 # install and cache app dependencies
-COPY package.json .
-COPY package-lock.json .
+COPY ./services/client/package.json .
+COPY ./services/client/package-lock.json .
 RUN npm ci
 RUN npm install react-scripts@5.0.1 prettier@2.7.1 eslint@8.27.0 -g --silent
 
