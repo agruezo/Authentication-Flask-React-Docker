@@ -1,3 +1,5 @@
+[![CI/CD](https://github.com/agruezo/Authentication-Flask-React-Docker/actions/workflows/main.yml/badge.svg)](https://github.com/agruezo/Authentication-Flask-React-Docker/actions/workflows/main.yml)
+
 <h1 align="center" >Authentication with Flask, React, and Docker</h1>
 
 <h2>Objectives</h2>
