@@ -97,10 +97,11 @@ jobs:
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
           DATABASE_URL: postgresql://postgres:postgres@postgres:5432/users
         run: |
-          pytest "services/users/src/tests" -p no:warnings -p no:cacheprovider
-          flake8 services/users/src
-          black services/users/src --check
-          isort services/users/src --check-only
+          cd services/users
+          pytest "src/tests" -p no:warnings -p no:cacheprovider
+          flake8 src
+          black src --check
+          isort src --check-only
 
   test-client:
     runs-on: ubuntu-latest
