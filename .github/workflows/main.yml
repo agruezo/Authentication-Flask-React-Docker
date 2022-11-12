@@ -30,7 +30,7 @@ jobs:
       uses: docker/build-push-action@v3.2.0
       with:
         context: .
-        file: .services/users/Dockerfile.prod
+        file: ./services/users/Dockerfile.prod
         build-args: SECRET_KEY=${{ secrets.SECRET_KEY }}
         push: true
         tags: ${{ secrets.DOCKER_HUB_USERNAME }}/users
@@ -58,7 +58,7 @@ jobs:
       uses: docker/build-push-action@v3.2.0
       with:
         context: .
-        file: .services/client/Dockerfile.ci
+        file: ./services/client/Dockerfile.ci
         push: true
         tags: ${{ secrets.DOCKER_HUB_USERNAME }}/client
         cache-from: type=registry, ref=${{ secrets.DOCKER_HUB_USERNAME }}/client:cache
