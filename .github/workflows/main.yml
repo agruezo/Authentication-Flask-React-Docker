@@ -35,7 +35,7 @@ jobs:
         push: true
         tags: ${{ secrets.DOCKER_HUB_USERNAME }}/users
         cache-from: type=registry, ref=${{ secrets.DOCKER_HUB_USERNAME }}/users:cache
-        cache-to: type=registry, ref=${{ secrets.DOCKER_HUB }}/users:buildcache, mode=max
+        cache-to: type=registry, ref=${{ secrets.DOCKER_HUB_USERNAME }}/users:buildcache, mode=max
 
   build-client:
     runs-on: ubuntu-latest
@@ -59,11 +59,10 @@ jobs:
       with:
         context: .
         file: .services/client/Dockerfile.ci
-        build-args: SECRET_KEY=${{ secrets.SECRET_KEY }}
         push: true
         tags: ${{ secrets.DOCKER_HUB_USERNAME }}/client
         cache-from: type=registry, ref=${{ secrets.DOCKER_HUB_USERNAME }}/client:cache
-        cache-to: type=registry, ref=${{ secrets.DOCKER_HUB }}/client:buildcache, mode=max
+        cache-to: type=registry, ref=${{ secrets.DOCKER_HUB_USERNAME }}/client:buildcache, mode=max
 
   test-users:
     runs-on: ubuntu-latest
