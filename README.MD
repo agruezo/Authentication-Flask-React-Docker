@@ -8,7 +8,6 @@
 
 -- Spin up a reproducible development environment with Docker to manage a RESTful API powered by Python, the Flask, Flask-RESTX, and Postgres. Then add React along with Jest and React Testing Library to the client-side. Finally, introduce type checking, on the client-side, with React PropTypes and continuous integration (CI).
 
-
 - Use Test-Driven Development to develop a React application
 - Work with React running inside a Docker Container
 - Test a React application with Jest and React Testing Library
@@ -31,7 +30,7 @@
 - Test a Flask app with pytest
 - Configure Flask Bcrypt for password hashing
 - Containerize Flask and React with a single Dockerfile using a multi-stage build
-- Configure GitLab CI to deploy Docker images to Heroku
+- Configure GitHub Actions to deploy Docker images to Heroku
 - Document a RESTful API with Swagger/OpenAPI
 
 ---
@@ -82,3 +81,9 @@
       docker login -u _ -p $HEROKU_API_KEY registry.heroku.com
       docker push $HEROKU_REGISTRY_IMAGE
       ./release.sh
+
+<h3>Issues Hot Loading with React-Script 5.x.x</h3>
+
+- If browser is trying to open a websocket back to the node server to ws://localhost:3000 add the following as an environment variable:
+
+   `WDS_SOCKET_PORT=0`

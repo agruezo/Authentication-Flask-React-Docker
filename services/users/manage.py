@@ -18,11 +18,13 @@ def recreate_db():
 def seed_db():
     db.session.add(User(
         username='redninja',
-        email='redninja@dojo.com'
+        email='redninja@dojo.com',
+        password='testpassword'
     ))
     db.session.add(User(
         username='blueninja',
-        email='blueninja@dojo.com'
+        email='blueninja@dojo.com',
+        password='testpassword'
     ))
     db.session.commit()
 

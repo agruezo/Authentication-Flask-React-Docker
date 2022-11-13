@@ -2,6 +2,8 @@ import json
 
 import pytest
 
+from src import bcrypt
+from src.api.users.crud import get_user_by_id
 from src.api.users.models import User
 
 
@@ -9,7 +11,9 @@ def test_add_user(test_app, test_database):
     client = test_app.test_client()
     res = client.post(
         "/users",
-        data=json.dumps({"username": "alex", "email": "alex@kali.com"}),
+        data=json.dumps(
+            {"username": "alex", "email": "alex@kali.com", "password": "testpassword"}
+        ),
         content_type="application/json",
     )
     data = json.loads(res.data.decode())
@@ -48,12 +52,16 @@ def test_add_user_duplicate_email(test_app, test_database):
     client = test_app.test_client()
     client.post(
         "/users",
-        data=json.dumps({"username": "alex", "email": "alex@kali.com"}),
+        data=json.dumps(
+            {"username": "alex", "email": "alex@kali.com", "password": "testpassword"}
+        ),
         content_type="application/json",
     )
     res = client.post(
         "/users",
-        data=json.dumps({"username": "alex", "email": "alex@kali.com"}),
+        data=json.dumps(
+            {"username": "alex", "email": "alex@kali.com", "password": "testpassword"}
+        ),
         content_type="application/json",
     )
     data = json.loads(res.data.decode())
@@ -63,7 +71,7 @@ def test_add_user_duplicate_email(test_app, test_database):
 
 
 def test_single_user(test_app, test_database, add_user):
-    user = add_user("randy", "randy@arnis.com")
+    user = add_user("randy", "randy@arnis.com", "testpassword")
     client = test_app.test_client()
     res = client.get(f"/users/{user.id}")
     data = json.loads(res.data.decode())
@@ -71,6 +79,7 @@ def test_single_user(test_app, test_database, add_user):
     assert res.status_code == 200
     assert "randy" in data["username"]
     assert "randy@arnis.com" in data["email"]
+    assert "password" not in data
 
 
 def test_single_user_incorrect_id(test_app, test_database):
@@ -84,8 +93,8 @@ def test_single_user_incorrect_id(test_app, test_database):
 
 def test_all_users(test_app, test_database, add_user):
     test_database.session.query(User).delete()
-    add_user("leila", "leila@eskrima.com")
-    add_user("kristian", "kristian@arnis.com")
+    add_user("leila", "leila@eskrima.com", "testpassword")
+    add_user("kristian", "kristian@arnis.com", "testpassword")
     client = test_app.test_client()
     res = client.get("/users")
     data = json.loads(res.data.decode())
@@ -94,13 +103,15 @@ def test_all_users(test_app, test_database, add_user):
     assert len(data) == 2
     assert "leila" in data[0]["username"]
     assert "leila@eskrima.com" in data[0]["email"]
+    assert "password" not in data[0]
     assert "kristian" in data[1]["username"]
     assert "kristian@arnis.com" in data[1]["email"]
+    assert "password" not in data[1]
 
 
 def test_remove_user(test_app, test_database, add_user):
     test_database.session.query(User).delete()
-    user = add_user("remove user", "remove@user.com")
+    user = add_user("remove user", "remove@user.com", "testpassword")
     client = test_app.test_client()
     res = client.get("/users")
     data = json.loads(res.data.decode())
@@ -131,7 +142,7 @@ def test_remove_user_incorrect_id(test_app, test_database):
 
 
 def test_update_user(test_app, test_database, add_user):
-    user = add_user("update_user", "update@user.com")
+    user = add_user("update_user", "update@user.com", "testpassword")
     client = test_app.test_client()
     res = client.put(
         f"/users/{user.id}",
@@ -223,8 +234,8 @@ def test_update_user_invalid(
 
 
 def test_update_user_duplicate_email(test_app, test_database, add_user):
-    add_user("me", "me@user.com")
-    user = add_user("other", "other@notuser.com")
+    add_user("me", "me@user.com", "testpassword")
+    user = add_user("other", "other@notuser.com", "testpassword")
     client = test_app.test_client()
     res = client.put(
         f"/users/{user.id}",
@@ -235,3 +246,27 @@ def test_update_user_duplicate_email(test_app, test_database, add_user):
 
     assert res.status_code == 400
     assert "Sorry. That email already exists." in data["message"]
+
+
+def test_update_user_with_password(test_app, test_database, add_user):
+    password_one = "testpassword"
+    password_two = "testpassword2"
+    user = add_user("update_user", "update_user@update.com", password_one)
+
+    assert bcrypt.check_password_hash(user.password, password_one)
+
+    client = test_app.test_client()
+    res = client.put(
+        f"/users/{user.id}",
+        data=json.dumps(
+            {"username": "user", "email": "user@me.com", "password": password_two}
+        ),
+        content_type="application/json",
+    )
+
+    assert res.status_code == 200
+
+    user = get_user_by_id(user.id)
+
+    assert bcrypt.check_password_hash(user.password, password_one)
+    assert not bcrypt.check_password_hash(user.password, password_two)
