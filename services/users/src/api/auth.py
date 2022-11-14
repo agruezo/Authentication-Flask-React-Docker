@@ -1,12 +1,10 @@
 import jwt
-
 from flask import request
 from flask_restx import Namespace, Resource, fields
 
-from src.api.users.crud import get_user_by_email, get_user_by_id, add_user
-from src.api.users.models import User
 from src import bcrypt
-
+from src.api.users.crud import add_user, get_user_by_email, get_user_by_id
+from src.api.users.models import User
 
 auth_namespace = Namespace("auth")
 
@@ -27,25 +25,20 @@ login = auth_namespace.model(
     {
         "email": fields.String(required=True),
         "password": fields.String(required=True),
-    }
+    },
 )
 
 refresh = auth_namespace.model(
-    "Refresh",
-    {
-        "refresh_token": fields.String(required=True)
-    }
+    "Refresh", {"refresh_token": fields.String(required=True)}
 )
 
 tokens = auth_namespace.clone(
-    "Access and refresh_tokens", refresh,
-    {
-        "access_token": fields.String(required=True)
-    }
+    "Access and refresh_tokens", refresh, {"access_token": fields.String(required=True)}
 )
 
 parser = auth_namespace.parser()
 parser.add_argument("Authorization", location="headers")
+
 
 class Register(Resource):
     @auth_namespace.marshal_with(user)
@@ -80,14 +73,11 @@ class Login(Resource):
         user = get_user_by_email(email)
         if not user or not bcrypt.check_password_hash(user.password, password):
             auth_namespace.abort(404, "User does not exist")
-        
+
         access_token = user.encode_token(user.id, "access")
         refresh_token = user.encode_token(user.id, "refresh")
 
-        response_object = {
-            "access_token": access_token,
-            "refresh_token": refresh_token
-        }
+        response_object = {"access_token": access_token, "refresh_token": refresh_token}
 
         return response_object, 200
 
@@ -145,7 +135,7 @@ class Status(Resource):
 
                 if not user:
                     auth_namespace.abort(401, "Invalid token")
-                
+
                 return user, 200
 
             except jwt.ExpiredSignatureError:

@@ -1,7 +1,6 @@
 import json
 
 import pytest
-
 from flask import current_app
 
 
@@ -68,10 +67,7 @@ def test_registered_user_login(test_app, test_database, add_user):
     client = test_app.test_client()
     res = client.post(
         "/auth/login",
-        data=json.dumps({
-            "email": "he@user.com",
-            "password": "testpassword"
-        }),
+        data=json.dumps({"email": "he@user.com", "password": "testpassword"}),
         content_type="application/json",
     )
     data = json.loads(res.data.decode())
@@ -86,10 +82,7 @@ def test_not_registered_user_login(test_app, test_database):
     client = test_app.test_client()
     res = client.post(
         "/auth/login",
-        data=json.dumps({
-            "email": "none@user.com",
-            "password": "testpassword"
-        }),
+        data=json.dumps({"email": "none@user.com", "password": "testpassword"}),
         content_type="application/json",
     )
     data = json.loads(res.data.decode())
@@ -104,19 +97,14 @@ def test_valid_refresh(test_app, test_database, add_user):
     client = test_app.test_client()
     res = client.post(
         "/auth/login",
-        data=json.dumps({
-            "email": "she@user.com",
-            "password": "testpassword"
-        }),
+        data=json.dumps({"email": "she@user.com", "password": "testpassword"}),
         content_type="application/json",
     )
 
     refresh_token = json.loads(res.data.decode())["refresh_token"]
     res = client.post(
         "auth/refresh",
-        data=json.dumps({
-            "refresh_token": refresh_token
-        }),
+        data=json.dumps({"refresh_token": refresh_token}),
         content_type="application/json",
     )
     data = json.loads(res.data.decode())
@@ -134,19 +122,14 @@ def test_invalid_refresh_expired_token(test_app, test_database, add_user):
     client = test_app.test_client()
     res = client.post(
         "/auth/login",
-        data=json.dumps({
-            "email": "they@user.com",
-            "password": "testpassword"
-        }),
+        data=json.dumps({"email": "they@user.com", "password": "testpassword"}),
         content_type="application/json",
     )
 
     refresh_token = json.loads(res.data.decode())["refresh_token"]
     res = client.post(
         "auth/refresh",
-        data=json.dumps({
-            "refresh_token": refresh_token
-        }),
+        data=json.dumps({"refresh_token": refresh_token}),
         content_type="application/json",
     )
     data = json.loads(res.data.decode())
@@ -160,9 +143,7 @@ def test_invalid_refresh(test_app, test_database):
     client = test_app.test_client()
     res = client.post(
         "/auth/refresh",
-        data=json.dumps({
-            "refresh_token": "Invalid"
-        }),
+        data=json.dumps({"refresh_token": "Invalid"}),
         content_type="application/json",
     )
     data = json.loads(res.data.decode())
@@ -177,16 +158,13 @@ def test_user_status(test_app, test_database, add_user):
     client = test_app.test_client()
     res_login = client.post(
         "/auth/login",
-        data=json.dumps({
-            "email": "we@user.com",
-            "password": "testpassword"
-        }),
-        content_type ="application/json",
+        data=json.dumps({"email": "we@user.com", "password": "testpassword"}),
+        content_type="application/json",
     )
     token = json.loads(res_login.data.decode())["access_token"]
     res = client.get(
         "/auth/status",
-        headers={"Authorization":f"Bearer {token}"},
+        headers={"Authorization": f"Bearer {token}"},
         content_type="application/json",
     )
     data = json.loads(res.data.decode())
