@@ -22,6 +22,11 @@ def seed_db():
         password='testpassword'
     ))
     db.session.add(User(
+        username='whiteninja',
+        email='whiteninja@dojo.com',
+        password='testpassword'
+    ))
+    db.session.add(User(
         username='blueninja',
         email='blueninja@dojo.com',
         password='testpassword'
