@@ -2,16 +2,16 @@
 import React from "react";
 import { render, cleanup } from "@testing-library/react";
 
-import About from "../About";
+import RegisterForm from "../RegisterForm";
 
 afterEach(cleanup);
 
 it("renders properly", () => {
-  const { getByText } = render(<About />);
-  expect(getByText("Add something relevant here.")).toHaveClass("content");
+  const { getByText } = render(<RegisterForm />);
+  expect(getByText("Register")).toHaveClass("title");
 });
 
 it("renders", () => {
-  const { asFragment } = render(<About />);
+  const { asFragment } = render(<RegisterForm />);
   expect(asFragment()).toMatchSnapshot();
 });
