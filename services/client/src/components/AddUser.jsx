@@ -74,7 +74,6 @@ const AddUser = (props) => (
               }
               type="email"
               placeholder="Enter an email"
-              required
               value={values.email}
               onChange={handleChange}
               onBlur={handleBlur}

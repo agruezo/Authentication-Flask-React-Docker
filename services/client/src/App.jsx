@@ -15,9 +15,8 @@ class App extends Component {
 
     this.state = {
       users: [],
-      username: "",
-      email: "",
       title: "Gruezo.com",
+      accessToken: null,
     };
     // this.addUser = this.addUser.bind(this); #use this only if an arrow function isn't used for addUser method below
 
@@ -44,7 +43,7 @@ class App extends Component {
       });
   };
 
-  getUsers() {
+  getUsers = () => {
     axios
       .get(`${process.env.REACT_APP_API_SERVICE_URL}/users`)
       .then((res) => {
@@ -55,12 +54,77 @@ class App extends Component {
       .catch((err) => {
         console.log(err);
       });
-  }
+  };
+
+  handleRegisterFormSubmit = (data) => {
+    const url = `${process.env.REACT_APP_API_SERVICE_URL}/auth/register`;
+    axios
+      .post(url, data)
+      .then((res) => {
+        console.log(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  handleLoginFormSubmit = (data) => {
+    const url = `${process.env.REACT_APP_API_SERVICE_URL}/auth/login`;
+    axios
+      .post(url, data)
+      .then((res) => {
+        console.log(res.data);
+        this.setState({
+          accessToken: res.data.access_token,
+        });
+        this.getUsers();
+        window.localStorage.setItem("refreshToken", res.data.refresh_token);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  isAuthenticated = () => {
+    if (this.state.accessToken || this.validRefresh()) {
+      return true;
+    }
+    return false;
+  };
+
+  validRefresh = () => {
+    const token = window.localStorage.getItem("refreshToken");
+    if (token) {
+      axios
+        .post(`${process.env.REACT_APP_API_SERVICE_URL}/auth/refresh`, {
+          refresh_token: token,
+        })
+        .then((res) => {
+          this.setState({
+            access_token: res.data.access_token,
+          });
+          this.getUsers();
+          window.localStorage.setItem("refresh token", res.data.refresh_token);
+          return true;
+        })
+        .catch((err) => {
+          return false;
+        });
+    }
+    return false;
+  };
+
+  logoutUser = () => {
+    window.localStorage.removeItem("refreshToken");
+    this.setState({
+      accessToken: null,
+    });
+  };
 
   render() {
     return (
       <div>
-        <NavBar title={this.state.title} />
+        <NavBar title={this.state.title} logoutUser={this.logoutUser} />
         <section className="section">
           <div className="container">
             <div className="columns">
@@ -89,8 +153,26 @@ class App extends Component {
                     }
                   />
                   <Route exact path="/about" element={<About />} />
-                  <Route exact path="/register" element={<RegisterForm />} />
-                  <Route exact path="/login" element={<LoginForm />} />
+                  <Route
+                    exact
+                    path="/register"
+                    element={
+                      <RegisterForm
+                        handleRegisterFormSubmit={this.handleRegisterFormSubmit}
+                        isAuthenticated={this.isAuthenticated}
+                      />
+                    }
+                  />
+                  <Route
+                    exact
+                    path="/login"
+                    element={
+                      <LoginForm
+                        handleLoginFormSubmit={this.handleLoginFormSubmit}
+                        isAuthenticated={this.isAuthenticated}
+                      />
+                    }
+                  />
                 </Routes>
               </div>
             </div>

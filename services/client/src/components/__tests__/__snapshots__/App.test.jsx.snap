@@ -63,12 +63,11 @@ exports[`renders 1`] = `
             >
               Log In
             </a>
-            <a
-              class="navbar-item"
-              href="/logout"
+            <span
+              class="navbar-item link"
             >
               Log Out
-            </a>
+            </span>
           </div>
         </div>
       </section>
@@ -128,7 +127,6 @@ exports[`renders 1`] = `
                     id="input-email"
                     name="email"
                     placeholder="Enter an email"
-                    required=""
                     type="email"
                     value=""
                   />
