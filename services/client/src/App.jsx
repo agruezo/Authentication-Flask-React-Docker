@@ -8,6 +8,7 @@ import About from "./components/About";
 import NavBar from "./components/NavBar";
 import RegisterForm from "./components/RegisterForm";
 import LoginForm from "./components/LoginForm";
+import UserStatus from "./components/UserStatus";
 
 class App extends Component {
   constructor() {
@@ -124,7 +125,11 @@ class App extends Component {
   render() {
     return (
       <div>
-        <NavBar title={this.state.title} logoutUser={this.logoutUser} />
+        <NavBar
+          title={this.state.title}
+          logoutUser={this.logoutUser}
+          isAuthenticated={this.isAuthenticated}
+        />
         <section className="section">
           <div className="container">
             <div className="columns">
@@ -169,6 +174,16 @@ class App extends Component {
                     element={
                       <LoginForm
                         handleLoginFormSubmit={this.handleLoginFormSubmit}
+                        isAuthenticated={this.isAuthenticated}
+                      />
+                    }
+                  />
+                  <Route
+                    exact
+                    path="/status"
+                    element={
+                      <UserStatus
+                        accessToken={this.state.accessToken}
                         isAuthenticated={this.isAuthenticated}
                       />
                     }
