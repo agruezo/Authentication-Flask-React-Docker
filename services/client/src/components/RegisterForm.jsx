@@ -26,15 +26,15 @@ const RegisterForm = (props) => {
         }}
         validationSchema={Yup.object().shape({
           username: Yup.string()
-            .required("Username is required")
-            .min(6, "Username must be at least 6 characters"),
+            .required("Username is required.")
+            .min(6, "Username must be at least 6 characters."),
           email: Yup.string()
             .email("Enter a valid email.")
-            .required("Email is required")
-            .min(6, "Email must be at least 6 characters"),
+            .required("Email is required.")
+            .min(6, "Email must be at least 6 characters."),
           password: Yup.string()
-            .required("Password is required")
-            .min(8, "Password must be at least 8 characters"),
+            .required("Password is required.")
+            .min(8, "Password must be at least 8 characters."),
         })}
       >
         {(props) => {
@@ -69,7 +69,9 @@ const RegisterForm = (props) => {
                   onBlur={handleBlur}
                 />
                 {errors.username && touched.username && (
-                  <div className="input-feedback">{errors.username}</div>
+                  <div className="input-feedback" data-testid="errors-username">
+                    {errors.username}
+                  </div>
                 )}
               </div>
               <div className="field">
@@ -89,7 +91,9 @@ const RegisterForm = (props) => {
                   onBlur={handleBlur}
                 />
                 {errors.email && touched.email && (
-                  <div className="input-feedback">{errors.email}</div>
+                  <div className="input-feedback" data-testid="errors-email">
+                    {errors.email}
+                  </div>
                 )}
               </div>
               <div className="field">
@@ -111,7 +115,9 @@ const RegisterForm = (props) => {
                   onBlur={handleBlur}
                 />
                 {errors.password && touched.password && (
-                  <div className="input-feedback">{errors.password}</div>
+                  <div className="input-feedback" data-testid="errors-password">
+                    {errors.password}
+                  </div>
                 )}
               </div>
               <input
