@@ -33,7 +33,7 @@ const NavBar = (props) => {
           <Link to="/about" className="navbar-item" data-testid="nav-about">
             About
           </Link>
-          <Link to="/register" className="navbar-item" data-testid="nav-status">
+          <Link to="/status" className="navbar-item" data-testid="nav-status">
             User Status
           </Link>
         </div>

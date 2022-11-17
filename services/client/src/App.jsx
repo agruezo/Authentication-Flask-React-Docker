@@ -9,6 +9,7 @@ import NavBar from "./components/NavBar";
 import RegisterForm from "./components/RegisterForm";
 import LoginForm from "./components/LoginForm";
 import UserStatus from "./components/UserStatus";
+import Message from "./components/Message";
 
 class App extends Component {
   constructor() {
@@ -18,6 +19,8 @@ class App extends Component {
       users: [],
       title: "Gruezo.com",
       accessToken: null,
+      messageType: null,
+      messageText: null,
     };
     // this.addUser = this.addUser.bind(this); #use this only if an arrow function isn't used for addUser method below
 
@@ -38,9 +41,11 @@ class App extends Component {
           username: "",
           email: "",
         });
+        this.createMessage("success", "User added");
       })
       .catch((err) => {
         console.log(err);
+        this.createMessage("danger", "That user already exists.");
       });
   };
 
@@ -63,9 +68,11 @@ class App extends Component {
       .post(url, data)
       .then((res) => {
         console.log(res.data);
+        this.createMessage("success", "You have registered successfully.");
       })
       .catch((err) => {
         console.log(err);
+        this.createMessage("danger", "That user already exists.");
       });
   };
 
@@ -80,9 +87,11 @@ class App extends Component {
         });
         this.getUsers();
         window.localStorage.setItem("refreshToken", res.data.refresh_token);
+        this.createMessage("success", "You have logged in successfully.");
       })
       .catch((err) => {
         console.log(err);
+        this.createMessage("danger", "Incorrect email and/or password.");
       });
   };
 
@@ -120,6 +129,24 @@ class App extends Component {
     this.setState({
       accessToken: null,
     });
+    this.createMessage("success", "You have logged out.");
+  };
+
+  createMessage = (type, text) => {
+    this.setState({
+      messageType: type,
+      messageText: text,
+    });
+    setTimeout(() => {
+      this.removeMessage();
+    }, 3000);
+  };
+
+  removeMessage = () => {
+    this.setState({
+      messageType: null,
+      messageText: null,
+    });
   };
 
   render() {
@@ -132,6 +159,13 @@ class App extends Component {
         />
         <section className="section">
           <div className="container">
+            {this.state.messageType && this.state.messageText && (
+              <Message
+                messageType={this.state.messageType}
+                messageText={this.state.messageText}
+                removeMessage={this.removeMessage}
+              />
+            )}
             <div className="columns">
               <div className="column is-one-half">
                 <br />
